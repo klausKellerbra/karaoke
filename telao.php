@@ -21,10 +21,15 @@ if (!$row) {
     die("Música não encontrada");
 }
 
-// Buscar no YouTube (com cache)
-$youtube = buscarYouTubeComCache($conn, $codigo, $row['artista'], $row['musica']);
-if ($youtube) {
-    $row = array_merge($row, $youtube);
+// Buscar no YouTube (com cache) - com tratamento de erro
+try {
+    $youtube = buscarYouTubeComCache($conn, $codigo, $row['artista'], $row['musica']);
+    if ($youtube && is_array($youtube)) {
+        $row = array_merge($row, $youtube);
+    }
+} catch (Exception $e) {
+    // Se houver erro, continua sem YouTube
+    error_log("YouTube Error: " . $e->getMessage());
 }
 ?>
 

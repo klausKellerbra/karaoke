@@ -2,6 +2,7 @@
 /**
  * YouTube Helper - Integração com YouTube Data API v3
  * Busca e cacheia informações de vídeos do YouTube
+ * Versão sem CURL (usando file_get_contents)
  */
 
 define('YOUTUBE_API_KEY', 'AIzaSyAOb5TVS9VquqNwX4F4bevPRwLh0RIXAxY');
@@ -31,21 +32,26 @@ function buscarNoYouTube($artista, $musica) {
         
         $url = $url . '?' . http_build_query($params);
         
-        // Fazer requisição
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        $response = curl_exec($ch);
-        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        // Fazer requisição com file_get_contents
+        $context = stream_context_create([
+            'http' => [
+                'timeout' => 10
+            ]
+        ]);
         
-        if ($httpcode !== 200) {
-            error_log("YouTube API Error: HTTP $httpcode");
+        $response = @file_get_contents($url, false, $context);
+        
+        if ($response === false) {
+            error_log("YouTube API Error: Could not fetch URL");
             return null;
         }
         
         $data = json_decode($response, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log("YouTube JSON Error: " . json_last_error_msg());
+            return null;
+        }
         
         // Verificar se encontrou resultados
         if (!empty($data['items'])) {
@@ -82,15 +88,15 @@ function buscarNoYouTube($artista, $musica) {
  * @return array|null Dados do YouTube
  */
 function buscarYouTubeComCache($conn, $codigo, $artista, $musica) {
-    // Verificar se já tem no banco
-    $result = pg_query_params($conn, 
-        "SELECT youtube_id, youtube_titulo, youtube_thumbnail, youtube_canal FROM musicas_karaoke WHERE codigo = $1",
+    // Verificar se as colunas existem (fallback seguro)
+    $result = @pg_query_params($conn, 
+        "SELECT youtube_id, youtube_titulo, youtube_thumbnail, youtube_canal FROM musicas_karaoke WHERE codigo = $1 LIMIT 1",
         [$codigo]
     );
     
     if ($result) {
         $row = pg_fetch_assoc($result);
-        if ($row && $row['youtube_id']) {
+        if ($row && !empty($row['youtube_id'])) {
             // Já existe em cache
             return [
                 'id' => $row['youtube_id'],
@@ -100,14 +106,18 @@ function buscarYouTubeComCache($conn, $codigo, $artista, $musica) {
                 'cached' => true
             ];
         }
+    } else {
+        // Colunas não existem ainda, retorna null sem erro
+        return null;
     }
     
     // Se não tiver, busca na API
     $youtube = buscarNoYouTube($artista, $musica);
     
     if ($youtube) {
-        // Armazenar no banco (cache)
-        pg_query_params($conn,
+        // Tentar armazenar no banco (cache)
+        // Usar @ para suprimir erro se colunas não existem
+        @pg_query_params($conn,
             "UPDATE musicas_karaoke SET youtube_id = $1, youtube_titulo = $2, youtube_thumbnail = $3, youtube_canal = $4 WHERE codigo = $5",
             [$youtube['id'], $youtube['titulo'], $youtube['thumbnail'], $youtube['canal'], $codigo]
         );
@@ -141,3 +151,4 @@ function getYouTubeEmbed($videoId, $width = "100%", $height = "400") {
             </iframe>';
 }
 ?>
+
