@@ -1,5 +1,6 @@
 <?php
 include 'conexao.php';
+include 'youtube_helper.php';
 
 $codigo = $_GET['codigo'] ?? '';
 
@@ -18,6 +19,12 @@ $row = pg_fetch_assoc($result);
 
 if (!$row) {
     die("Música não encontrada");
+}
+
+// Buscar no YouTube (com cache)
+$youtube = buscarYouTubeComCache($conn, $codigo, $row['artista'], $row['musica']);
+if ($youtube) {
+    $row = array_merge($row, $youtube);
 }
 ?>
 
@@ -112,6 +119,25 @@ if (!$row) {
             cursor: pointer;
         }
 
+        .youtube-video {
+            margin-top: 50px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .youtube-video iframe {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .youtube-info {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #999;
+            text-align: center;
+        }
+
         /* Responsividade para dispositivos móveis */
         @media (max-width: 768px) {
             .codigo {
@@ -147,6 +173,15 @@ if (!$row) {
             .youtube-link a {
                 padding: 8px 16px;
                 font-size: 12px;
+            }
+
+            .youtube-video {
+                margin-top: 30px;
+            }
+
+            .youtube-video iframe {
+                max-width: 100%;
+                height: 300px;
             }
         }
 
@@ -185,6 +220,19 @@ if (!$row) {
                 padding: 6px 12px;
                 font-size: 11px;
             }
+
+            .youtube-video {
+                margin-top: 20px;
+            }
+
+            .youtube-video iframe {
+                max-width: 100%;
+                height: 200px;
+            }
+
+            .youtube-info {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -210,6 +258,17 @@ if (!$row) {
         ▶️ Ver no YouTube
     </a>
 </div>
+
+<?php if ($row['youtube_id']): ?>
+<div class="youtube-video">
+    <?php echo getYouTubeEmbed($row['youtube_id']); ?>
+    <div class="youtube-info">
+        <strong><?php echo htmlspecialchars($row['youtube_titulo']); ?></strong>
+        <br>
+        Canal: <?php echo htmlspecialchars($row['youtube_canal']); ?>
+    </div>
+</div>
+<?php endif; ?>
 
 </body>
 </html>
