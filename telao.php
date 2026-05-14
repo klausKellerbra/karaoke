@@ -253,7 +253,7 @@ try {
 </div>
 
 <div class="biografia">
-    <a href="https://pt.wikipedia.org/wiki/<?php echo urlencode($row['artista']); ?>" target="_blank">
+    <a href="https://pt.wikipedia.org/w/index.php?title=Especial:Pesquisar&search=<?php echo urlencode($row['artista']); ?>&go=Ir" target="_blank">
         📖 Ver Biografia & Discografia
     </a>
 </div>
