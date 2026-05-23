@@ -44,6 +44,7 @@ try {
     <meta name="og:type" content="website">
     <meta name="theme-color" content="#000000">
     <title>Telão 🎤 - <?php echo htmlspecialchars($row['musica']); ?></title>
+    <link rel="stylesheet" href="styles.css">
 
     <style>
         body {
@@ -51,6 +52,8 @@ try {
             color: white;
             text-align: center;
             font-family: Arial;
+            margin: 0;
+            padding: 0;
         }
 
         .codigo {
@@ -244,7 +247,7 @@ try {
 
 <body>
 
-<div class="codigo"><?php echo $row['codigo']; ?></div>
+<div class="codigo"><?php echo $row['codigo_exibicao']; ?></div>
 <div class="musica"><?php echo $row['musica']; ?></div>
 <div class="artista">
     <a href="buscar.php?q=<?php echo urlencode($row['artista']); ?>" target="_blank">
@@ -262,6 +265,10 @@ try {
     <a href="https://www.youtube.com/results?search_query=<?php echo urlencode($row['artista'] . ' ' . $row['musica']); ?>" target="_blank">
         ▶️ Ver no YouTube
     </a>
+</div>
+
+<div style="margin-top:15px;">
+    <button type="button" class="fav-btn" data-codigo="<?php echo htmlspecialchars($row['codigo']); ?>" aria-label="Adicionar aos favoritos" aria-pressed="false"></button>
 </div>
 
 <?php if ($row['youtube_id']): ?>

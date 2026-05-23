@@ -35,145 +35,8 @@ if ($pagina > $total_paginas && $total_paginas > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Lista completa de músicas de karaokê">
     <title>Todas as músicas - Karaokê</title>
-
+    <link rel="stylesheet" href="styles.css">
     <style>
-        body { font-family: Arial; background:#f5f6fa; margin:0; }
-        header { background:#2f3640; color:white; padding:15px; text-align:center; }
-
-        .container {
-            max-width:800px;
-            margin:30px auto;
-            background:white;
-            padding:20px;
-        }
-
-        .menu a {
-            margin-right:10px;
-            padding:8px;
-            background:#00b894;
-            color:white;
-            text-decoration:none;
-        }
-
-        .item {
-            padding:10px;
-            border-bottom:1px solid #eee;
-            cursor:pointer;
-            display: grid;
-            grid-template-columns: minmax(80px, 80px) 1fr minmax(100px, auto);
-            gap: 15px;
-            align-items: center;
-            font-size: 13px;
-        }
-
-        .item:hover {
-            background:#f1f2f6;
-        }
-
-        .codigo {
-            color: #0984e3;
-            font-weight: 700;
-            text-align: left;
-            border-right: 1px solid #ddd;
-            padding-right: 10px;
-        }
-
-        .artista {
-            color: #1aaf4f;
-            font-weight: 700;
-            text-align: left;
-            border-right: 1px solid #ddd;
-            padding-right: 12px;
-        }
-
-        .musica {
-            font-weight: 500;
-            text-align: left;
-            padding-left: 12px;
-        }
-
-        .item-header {
-            padding:10px;
-            border-bottom:2px solid #2f3640;
-            display: grid;
-            grid-template-columns: minmax(80px, 80px) 1fr minmax(100px, auto);
-            gap: 15px;
-            font-weight: 700;
-            background: #ecf0f1;
-            font-size: 13px;
-        }
-
-        .header-codigo {
-            text-align: left;
-            border-right: 1px solid #bdc3c7;
-            padding-right: 10px;
-        }
-
-        .header-artista {
-            text-align: left;
-            border-right: 1px solid #bdc3c7;
-            padding-right: 12px;
-        }
-
-        .header-musica {
-            text-align: left;
-            padding-left: 12px;
-        }
-
-        .paginacao {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-            margin: 20px 0;
-            padding: 15px;
-            background: #f5f6fa;
-            border-radius: 8px;
-        }
-
-        .paginacao a, .paginacao span, .paginacao button {
-            text-decoration: none;
-            padding: 8px 12px;
-            background: #dfe6e9;
-            border: 1px solid #b2bec3;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .paginacao a:hover, .paginacao button:hover {
-            background: #b2bec3;
-            color: white;
-        }
-
-        .paginacao .ativo {
-            background: #00b894;
-            color: white;
-            border-color: #00b894;
-            font-weight: bold;
-        }
-
-        .paginacao .separador {
-            background: none;
-            border: none;
-            cursor: default;
-            padding: 0 3px;
-        }
-
-        .paginacao .separador:hover {
-            background: none;
-        }
-
-        .info-paginacao {
-            text-align: center;
-            margin: 10px 0;
-            font-size: 13px;
-            color: #2f3640;
-            font-weight: 600;
-        }
-
         .controls-paginacao {
             display: flex;
             justify-content: center;
@@ -197,67 +60,7 @@ if ($pagina > $total_paginas && $total_paginas > 0) {
             font-size: 14px;
         }
 
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .container {
-                margin: 15px;
-                padding: 15px;
-            }
-
-            .item {
-                padding: 8px;
-                font-size: 12px;
-                grid-template-columns: minmax(70px, 70px) 1fr minmax(80px, auto);
-            }
-
-            .item-header {
-                font-size: 12px;
-                grid-template-columns: minmax(70px, 70px) 1fr minmax(80px, auto);
-            }
-        }
-
         @media (max-width: 480px) {
-            header {
-                padding: 10px;
-                font-size: 18px;
-            }
-
-            .container {
-                margin: 10px;
-                padding: 10px;
-            }
-
-            .item {
-                padding: 6px;
-                font-size: 11px;
-                grid-template-columns: minmax(60px, 60px) 1fr minmax(70px, auto);
-                gap: 8px;
-            }
-
-            .item-header {
-                font-size: 11px;
-                grid-template-columns: minmax(60px, 60px) 1fr minmax(70px, auto);
-                gap: 8px;
-            }
-
-            .codigo, .header-codigo {
-                padding-right: 5px;
-            }
-
-            .artista, .header-artista {
-                padding-right: 5px;
-            }
-
-            .musica, .header-musica {
-                padding-left: 5px;
-            }
-
-            .paginacao a, .paginacao span, .paginacao button {
-                padding: 6px 8px;
-                font-size: 12px;
-                margin: 2px;
-            }
-
             .controls-paginacao {
                 flex-direction: column;
                 gap: 10px;
@@ -271,10 +74,6 @@ if ($pagina > $total_paginas && $total_paginas > 0) {
             .controls-paginacao select {
                 width: 100%;
             }
-
-            .info-paginacao {
-                font-size: 12px;
-            }
         }
     </style>
 </head>
@@ -287,7 +86,8 @@ if ($pagina > $total_paginas && $total_paginas > 0) {
 
 <h2>Todas as músicas</h2>
 
-<div class="item-header">
+<div class="item-header with-fav">
+    <span class="header-fav" aria-hidden="true">★</span>
     <span class="header-codigo">Código</span>
     <span class="header-artista">Artista</span>
     <span class="header-musica">Música</span>
@@ -305,8 +105,8 @@ LIMIT $limite OFFSET $offset;
 $result = pg_query($conn, $sql);
 
 while ($row = pg_fetch_assoc($result)) {
-    echo "<div class='item'
-        onclick=\"window.open('telao.php?codigo={$row['codigo']}', '_blank')\">";
+    echo "<div class='item with-fav' onclick=\"window.open('telao.php?codigo={$row['codigo']}', '_blank')\">";
+    echo "<button type='button' class='fav-btn' data-codigo='{$row['codigo']}' title='Favoritar' aria-label='Adicionar aos favoritos' aria-pressed='false'></button>";
 
     echo "<span class='codigo'>{$row['codigo']}</span>";
     echo "<span class='artista'>{$row['artista']}</span>";
