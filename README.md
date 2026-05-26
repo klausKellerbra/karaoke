@@ -1,14 +1,17 @@
 # 🎤 Karaokê - Sistema de Gerenciamento de Músicas
 
-Um sistema web completo para gerenciamento e exibição de músicas de karaokê, com telão interativo e listagem responsiva.
+Um sistema web completo e moderno para gerenciamento e exibição de músicas de karaokê, com telão interativo, listagem responsiva, favoritos e busca dinâmica.
 
 ## 🌟 Características
 
 - **Telão Interativo** - Exibição grande e clara de código, música e artista (ideal para TVs e projetores)
-- **YouTube Integration** - Link direto para buscar a música no YouTube
+- **YouTube Integration** - Link direto para buscar a música no YouTube com cache em banco
 - **Biografia do Artista** - Link para Wikipedia com informações completas
-- **Busca de Artista** - Busca rápida de todas as músicas de um artista
-- **Listagem Completa** - Tabela com 20 itens por página, ordenada por artista e música
+- **Busca por Artista** - Listagem de todos os artistas com busca dinâmica em tempo real
+- **Favoritos** - Sistema de favoritos usando cookies, sincronizável entre dispositivos
+- **Listagem Completa** - Tabela com paginação, ordenada e com cores intercaladas
+- **Busca Avançada** - Filtros por categoria, gênero, idioma e artista
+- **CSS Centralizado** - Arquitetura modular com estilos consistentes
 - **Responsivo** - Funciona perfeitamente em desktop, tablet e celular
 - **SEO Otimizado** - Meta tags para melhor indexação
 
@@ -39,8 +42,14 @@ CREATE TABLE musicas_karaoke (
     codigo VARCHAR(10) UNIQUE NOT NULL,
     musica VARCHAR(255) NOT NULL,
     artista VARCHAR(255) NOT NULL,
+    artista_normalizado VARCHAR(255),
+    categoria VARCHAR(50),
     idioma VARCHAR(50),
     genero VARCHAR(50),
+    youtube_id VARCHAR(20),
+    youtube_titulo VARCHAR(255),
+    youtube_thumbnail VARCHAR(500),
+    youtube_canal VARCHAR(255),
     data_adicao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
@@ -85,19 +94,30 @@ Ou clique em qualquer música na listagem que abre automaticamente no telão.
 http://localhost/todas.php
 ```
 
-### Buscar por Artista
+### Buscar por Artista (com filtro dinâmico)
 ```
-http://localhost/buscar.php?q=nome_do_artista
+http://localhost/artista.php
+```
+Digite o nome do artista para filtrar em tempo real.
+
+### Ver Músicas de um Artista Específico
+```
+http://localhost/buscar_artista.php?art=nome_do_artista
+```
+
+### Busca Global
+```
+http://localhost/buscar.php?q=nome_da_musica_ou_artista
 ```
 
 ### Buscar por Categoria
 ```
-http://localhost/buscar_categoria.php?categoria=pop
+http://localhost/buscar_categoria.php?cat=pop
 ```
 
 ### Buscar por Gênero
 ```
-http://localhost/buscar_genero.php?genero=rock
+http://localhost/buscar_genero.php?gen=rock
 ```
 
 ### Buscar por Idioma
@@ -105,25 +125,38 @@ http://localhost/buscar_genero.php?genero=rock
 http://localhost/buscar_idioma.php?idioma=português
 ```
 
+### Ver Favoritos
+```
+http://localhost/favoritos.php
+```
+Clique no coração em qualquer música para adicionar aos favoritos (armazenados localmente).
+
+
 ## 📁 Estrutura de Arquivos
 
 ```
 karaoke/
 ├── README.md                  # Este arquivo
+├── styles.css                 # Estilos CSS centralizados
 ├── index.php                  # Página inicial
 ├── telao.php                  # Tela grande para karaokê
 ├── todas.php                  # Listagem completa de músicas
 ├── conexao.php                # Configuração do banco de dados
+├── favorites.js               # Sistema de favoritos (JavaScript)
+├── favoritos.php              # Página de favoritos
 ├── buscar.php                 # Busca global
+├── artista.php                # Listagem de artistas com filtro
+├── buscar_artista.php         # Busca de músicas por artista
 ├── buscar_categoria.php       # Busca por categoria
 ├── buscar_genero.php          # Busca por gênero
 ├── buscar_idioma.php          # Busca por idioma
 ├── categoria.php              # Listagem de categorias
 ├── genero.php                 # Listagem de gêneros
 ├── idioma.php                 # Listagem de idiomas
-├── layout_topo.php            # Template do cabeçalho
+├── youtube_helper.php         # Integração com YouTube API
+├── layout_topo.php            # Template do cabeçalho e menu
 ├── layout_rodape.php          # Template do rodapé
-└── dvdrental/                 # Arquivos de integração
+└── dvdrental/                 # Arquivos adicionais
 ```
 
 ## 🎨 Interface
@@ -137,12 +170,31 @@ karaoke/
 - Botão para ver biografia no Wikipedia
 - Totalmente responsivo para mobile
 
-### Listagem (todas.php)
+### Listagem Geral (todas.php)
 - Tabela com 3 colunas: **Código | Artista | Música**
-- 20 itens por página com paginação
-- Cores destacadas para fácil leitura
+- Paginação (10, 20 ou 50 itens por página)
+- Cores intercaladas para fácil leitura
+- Botões de favorito em cada linha
 - Clicável - abre automaticamente no telão
 - Responsivo para tablets e celulares
+
+### Busca de Artista (artista.php)
+- **Filtro dinâmico em tempo real** - digita e a lista é filtrada instantaneamente
+- Cores intercaladas (zebra striping) para melhor legibilidade
+- Mostra quantidade de artistas encontrados
+- Layout compacto para visualizar muitos artistas
+- Clique em um artista para ver todas suas músicas
+
+### Menu de Navegação (layout_topo.php)
+- Links para: Início, Artista, Categoria, Gênero, Idioma, Todas, Favoritos
+- Design responsivo com ícones intuitivos
+- Aparece em todas as páginas
+
+### Sistema de Favoritos
+- Ícone de coração em cada música
+- Armazenamento em cookie (persistente por 365 dias)
+- Página dedicada para visualizar favoritos
+- Sincronização com banco de dados opcional
 
 ## 📱 Responsividade
 
@@ -152,10 +204,13 @@ karaoke/
 
 ## 🔍 Recursos de Busca
 
-1. **Busca Global** - Procura por artista ou música
-2. **Por Categoria** - Filter por categoria de música
-3. **Por Gênero** - Filter por gênero (rock, pop, etc)
-4. **Por Idioma** - Filter por idioma (português, inglês, etc)
+1. **Busca Global** (buscar.php) - Procura por artista ou música
+2. **Busca por Artista** (artista.php) - Lista todos os artistas com filtro dinâmico em tempo real
+3. **Músicas do Artista** (buscar_artista.php) - Todas as músicas de um artista específico
+4. **Por Categoria** (buscar_categoria.php) - Filtra por categoria de música
+5. **Por Gênero** (buscar_genero.php) - Filtra por gênero (rock, pop, etc)
+6. **Por Idioma** (buscar_idioma.php) - Filtra por idioma (português, inglês, etc)
+7. **Favoritos** (favoritos.php) - Músicas marcadas como favoritas pelo usuário
 
 ## 🎯 Funcionalidades Principais
 
@@ -295,8 +350,27 @@ GitHub: [@klausKellerbra](https://github.com/klausKellerbra)
 
 ---
 
-**Última atualização:** Maio 2026  
-**Versão:** 1.0  
+**Última atualização:** 25 de Maio de 2026  
+**Versão:** 2.0  
 **Status:** Ativo ✅
+
+## 📋 Histórico de Versões
+
+### v2.0 (25/05/2026)
+- ✨ CSS centralizado em `styles.css`
+- ✨ Nova página de busca por artista com filtro dinâmico
+- ✨ Cores intercaladas (zebra striping) nas listas
+- ✨ Sistema de favoritos com cookies
+- 🔧 Melhoria no layout responsivo
+- 🔧 Compactação de elementos para melhor visualização
+- 📝 Suporte a campo `artista_normalizado` para buscas normalizadas
+- 📝 Campos adicionais no banco para cache de YouTube
+
+### v1.0 (23/05/2026)
+- Versão inicial do sistema
+- Telão interativo
+- Busca por categoria, gênero e idioma
+- Integração com YouTube
+- Links para Wikipedia
 
 Divirta-se com o karaokê! 🎤🎵
