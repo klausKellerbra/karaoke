@@ -1,11 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <link rel="stylesheet" href="styles.css">
-    <script src="favorites.js"></script>
-</head>
-<body>
-
 <header>🎤 Karaokê</header>
 
 <div class="container">
@@ -20,4 +12,5 @@
     <a href="favoritos.php">⭐ Favoritos</a>
 </div>
 
+<script src="favorites.js"></script>
 <hr>

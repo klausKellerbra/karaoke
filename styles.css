@@ -67,6 +67,11 @@ header {
     grid-template-columns: minmax(40px, 40px) minmax(80px, 80px) 1fr minmax(100px, auto);
 }
 
+.header-fav {
+    text-align: center;
+    color: #d63031;
+}
+
 .item {
     padding: 8px 10px;
     border-bottom: 1px solid #eee;
@@ -82,13 +87,29 @@ header {
     font-size: 13px;
 }
 
+.item:nth-child(odd) {
+    background: #ffffff;
+}
+
+.item:nth-child(even) {
+    background: #f3f4f6;
+}
+
+.item.with-fav:nth-child(odd) {
+    background: #ffffff;
+}
+
+.item.with-fav:nth-child(even) {
+    background: #f3f4f6;
+}
+
 /* Item com favorito (4 colunas) */
 .item.with-fav {
     grid-template-columns: minmax(40px, 40px) minmax(80px, 80px) 1fr minmax(100px, auto);
 }
 
 .item:hover {
-    background: #f1f2f6;
+    background: #dfe2ea;
 }
 
 .codigo {

@@ -17,7 +17,6 @@ if ($raw) {
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Favoritos - Karaokê</title>
     <link rel="stylesheet" href="styles.css">
-    <?php include 'layout_topo.php'; ?>
     <style>
         .fav-list { max-width:800px; margin:20px auto; }
         .fav-item { display:flex; align-items:center; gap:12px; padding:10px; border-bottom:1px solid #eee; background:white; }
@@ -28,6 +27,7 @@ if ($raw) {
     </style>
 </head>
 <body>
+    <?php include 'layout_topo.php'; ?>
 
 <div class="container fav-list">
     <h2>Favoritos</h2>

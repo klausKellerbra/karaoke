@@ -7,9 +7,10 @@ $busca = $_GET['q'] ?? '';
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="styles.css">
-    <?php include 'layout_topo.php'; ?>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultados</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
         .header-fav {
             text-align: center;
@@ -19,6 +20,7 @@ $busca = $_GET['q'] ?? '';
 </head>
 
 <body>
+    <?php include 'layout_topo.php'; ?>
 
 
 
@@ -35,6 +37,13 @@ $busca = $_GET['q'] ?? '';
 <hr>
 
 <h3>Resultados para: <?php echo htmlspecialchars($busca); ?></h3>
+
+<div class="item-header with-fav">
+    <span class="header-fav" aria-hidden="true">★</span>
+    <span class="header-codigo">Código</span>
+    <span class="header-artista">Artista</span>
+    <span class="header-musica">Música</span>
+</div>
 
 <?php
 
