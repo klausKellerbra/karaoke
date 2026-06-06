@@ -1,7 +1,20 @@
 <?php
 include 'conexao.php';
+include 'paginacao.php';
 
 $idioma = $_GET['idioma'] ?? '';
+$pagina = getCurrentPage();
+$limite = getLimit();
+$offset = ($pagina - 1) * $limite;
+
+$totalQuery = pg_query_params($conn, "SELECT COUNT(*) FROM musicas_karaoke WHERE idioma = $1", [$idioma]);
+$total = intval(pg_fetch_result($totalQuery, 0, 0));
+$total_paginas = max(1, (int) ceil($total / $limite));
+
+if ($pagina > $total_paginas && $total_paginas > 0) {
+    $pagina = $total_paginas;
+    $offset = ($pagina - 1) * $limite;
+}
 ?>
 
 <!DOCTYPE html>
@@ -25,11 +38,11 @@ $idioma = $_GET['idioma'] ?? '';
 
 <?php
 $sql = "
-SELECT codigo, musica,artista_normalizado, artista
+SELECT codigo, musica, artista_normalizado, artista
 FROM musicas_karaoke
 WHERE idioma = $1
 ORDER BY artista, musica
-LIMIT 100;
+LIMIT $limite OFFSET $offset;
 ";
 
 $result = pg_query_params($conn, $sql, [$idioma]);
@@ -45,6 +58,10 @@ while ($row = pg_fetch_assoc($result)) {
 
     echo "</div>";
 }
+
+renderLimitControl($limite);
+renderPaginationInfo($pagina, $limite, $total);
+renderPagination($pagina, $total_paginas);
 ?>
 
 </body>

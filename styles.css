@@ -199,6 +199,13 @@ header {
     border-radius: 8px;
 }
 
+.info-paginacao {
+    text-align: center;
+    color: #2d3436;
+    margin: 10px 0 0;
+    font-size: 14px;
+}
+
 .paginacao a,
 .paginacao span,
 .paginacao button {

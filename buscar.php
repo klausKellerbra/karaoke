@@ -1,7 +1,20 @@
 <?php
 include 'conexao.php';
+include 'paginacao.php';
 
 $busca = $_GET['q'] ?? '';
+$pagina = getCurrentPage();
+$limite = getLimit();
+$offset = ($pagina - 1) * $limite;
+
+$totalQuery = pg_query_params($conn, "SELECT COUNT(*) FROM musicas_karaoke WHERE musica ILIKE $1 OR artista ILIKE $1", ["%$busca%"]); 
+$total = intval(pg_fetch_result($totalQuery, 0, 0));
+$total_paginas = max(1, (int) ceil($total / $limite));
+
+if ($pagina > $total_paginas && $total_paginas > 0) {
+    $pagina = $total_paginas;
+    $offset = ($pagina - 1) * $limite;
+}
 ?>
 
 <!DOCTYPE html>
@@ -48,11 +61,11 @@ $busca = $_GET['q'] ?? '';
 <?php
 
 $sql = "
-SELECT codigo, musica, artista,artista_normalizado
+SELECT codigo, musica, artista, artista_normalizado
 FROM musicas_karaoke
 WHERE musica ILIKE $1 OR artista ILIKE $1
 ORDER BY artista
-LIMIT 50;
+LIMIT $limite OFFSET $offset;
 ";
 
 $result = pg_query_params($conn, $sql, ["%$busca%"]);
@@ -68,6 +81,10 @@ while ($row = pg_fetch_assoc($result)) {
 
     echo "</div>";
 }
+
+renderLimitControl($limite);
+renderPaginationInfo($pagina, $limite, $total);
+renderPagination($pagina, $total_paginas);
 ?>
 
 </div>
