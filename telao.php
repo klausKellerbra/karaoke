@@ -2,10 +2,39 @@
 include 'conexao.php';
 include 'youtube_helper.php';
 
-$codigo = $_GET['codigo'] ?? '';
+$codigo = $_POST['codigo'] ?? $_GET['codigo'] ?? '';
 
 if (!$codigo) {
     die("Código não fornecido");
+}
+
+$message = '';
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['audio'])) {
+    if ($_FILES['audio']['error'] !== UPLOAD_ERR_OK) {
+        $error = 'Erro no upload do arquivo. Tente novamente.';
+    } else {
+        $arquivoTmp = $_FILES['audio']['tmp_name'];
+        $nomeArquivo = $_FILES['audio']['name'];
+        $extensao = strtolower(pathinfo($nomeArquivo, PATHINFO_EXTENSION));
+
+        if ($extensao !== 'mp3') {
+            $error = 'Apenas arquivos MP3 são permitidos.';
+        } else {
+            $audioConteudo = file_get_contents($arquivoTmp);
+            $audioEscaped = pg_escape_bytea($conn, $audioConteudo);
+
+            $updateSql = "UPDATE musicas_karaoke SET audio = $1 WHERE codigo = $2";
+            $updateResult = pg_query_params($conn, $updateSql, [$audioEscaped, $codigo]);
+
+            if ($updateResult) {
+                $message = 'Áudio carregado com sucesso.';
+            } else {
+                $error = 'Falha ao salvar o áudio na tabela.';
+            }
+        }
+    }
 }
 
 $sql = "SELECT * FROM musicas_karaoke WHERE codigo = $1 LIMIT 1";
@@ -125,6 +154,73 @@ try {
             background-color: #ff0000;
             color: white;
             cursor: pointer;
+        }
+
+        .upload-form {
+            margin-top: 30px;
+            padding: 20px;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            text-align: left;
+            max-width: 420px;
+        }
+
+        .upload-form label {
+            display: block;
+            margin-bottom: 10px;
+            color: #ffffff;
+            font-size: 16px;
+        }
+
+        .upload-form input[type="file"] {
+            display: block;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .upload-form button {
+            padding: 10px 18px;
+            background: #00b894;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .upload-form button:hover {
+            background: #00a085;
+        }
+
+        .upload-status {
+            margin-top: 15px;
+            padding: 12px 18px;
+            border-radius: 8px;
+            display: inline-block;
+            font-size: 14px;
+        }
+
+        .upload-status.success {
+            background: rgba(46, 204, 113, 0.18);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        .upload-status.error {
+            background: rgba(231, 76, 60, 0.18);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .audio-player {
+            margin-top: 20px;
+        }
+
+        .audio-player audio {
+            width: 100%;
+            max-width: 420px;
         }
 
         .youtube-video {
@@ -270,6 +366,32 @@ try {
 <div style="margin-top:15px;">
     <button type="button" class="fav-btn" data-codigo="<?php echo htmlspecialchars($row['codigo']); ?>" aria-label="Adicionar aos favoritos" aria-pressed="false"></button>
 </div>
+
+<?php if (!empty($message)): ?>
+    <div class="upload-status success"><?php echo htmlspecialchars($message); ?></div>
+<?php endif; ?>
+
+<?php if (!empty($error)): ?>
+    <div class="upload-status error"><?php echo htmlspecialchars($error); ?></div>
+<?php endif; ?>
+
+<div class="upload-form">
+    <form method="post" enctype="multipart/form-data" action="telao.php?codigo=<?php echo urlencode($codigo); ?>">
+        <input type="hidden" name="codigo" value="<?php echo htmlspecialchars($codigo); ?>">
+        <label for="audio">Enviar MP3 da música selecionada:</label>
+        <input type="file" id="audio" name="audio" accept="audio/mpeg,.mp3" required>
+        <button type="submit">Carregar MP3</button>
+    </form>
+</div>
+
+<?php if (!empty($row['audio'])): ?>
+    <div class="audio-player">
+        <audio controls>
+            <source src="audio.php?codigo=<?php echo urlencode($codigo); ?>" type="audio/mpeg">
+            Seu navegador não suporta reprodução de áudio.
+        </audio>
+    </div>
+<?php endif; ?>
 
 <?php if ($row['youtube_id']): ?>
 <div class="youtube-video">

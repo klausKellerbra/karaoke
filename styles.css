@@ -8,24 +8,39 @@
 
 body {
     font-family: Arial, sans-serif;
-    background: #f5f6fa;
+    background: linear-gradient(180deg, #f8f9ff 0%, #eef3ff 100%);
     color: #333;
 }
 
-header {
-    background: #2f3640;
+.site-header {
+    background: linear-gradient(135deg, #1d3557, #2a6f97);
     color: white;
-    padding: 15px;
-    text-align: center;
-    font-size: 24px;
+    padding: 20px 0;
+    box-shadow: 0 6px 18px rgba(29, 53, 87, 0.18);
+}
+
+.site-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    background: transparent;
+    padding: 0;
+}
+
+.site-title {
+    font-size: clamp(1.5rem, 2.2vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: 0.04em;
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 30px auto;
-    background: white;
+    background: rgba(255,255,255,0.96);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
 }
 
 .menu {
@@ -36,17 +51,147 @@ header {
 }
 
 .menu a {
-    padding: 8px 12px;
+    padding: 10px 14px;
     background: #00b894;
     color: white;
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 14px;
-    transition: background 0.3s;
+    transition: background 0.3s, transform 0.2s;
 }
 
 .menu a:hover {
     background: #00a085;
+    transform: translateY(-1px);
+}
+
+.home-panel {
+    padding: 28px;
+}
+
+.hero-box {
+    display: grid;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 11px;
+    font-weight: 700;
+    color: #2a6f97;
+    margin-bottom: 8px;
+}
+
+.hero-box h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 10px;
+    color: #1d3557;
+}
+
+.hero-text {
+    color: #46576b;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.search-home {
+    display: flex;
+    gap: 10px;
+    max-width: 620px;
+}
+
+.search-home input {
+    flex: 1;
+    padding: 14px 16px;
+    border: 1px solid #d4dce8;
+    border-radius: 10px;
+    font-size: 1rem;
+}
+
+.search-home button,
+button[type="submit"] {
+    background: #1d3557;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.search-home button:hover,
+button[type="submit"]:hover {
+    opacity: 0.96;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #f0f8ff, #eaf9ff);
+    border: 1px solid #d5e7f9;
+    border-radius: 12px;
+    padding: 22px 18px;
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    color: #45607f;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+}
+
+.stat-card strong {
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    color: #1d3557;
+}
+
+.shortcut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.shortcut-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 24px 18px;
+    background: #fff;
+    border: 1px solid #e5eaf2;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #1d3557;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+}
+
+.shortcut-card span {
+    font-size: 2rem;
+}
+
+.shortcut-card small {
+    color: #53657a;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 /* Item listing styles */
